@@ -1,0 +1,23 @@
+library(vegan)
+bray <- vegdist(otu,method = "bray")
+bray <- as.matrix(bray)
+write.table(bray,"bray-crutis.txt",sep = "\t")
+ibrary(pheatmap)
+library(RColorBrewer)
+pheatmap(bray,color = colorRampPalette(brewer.pal(7,"RdYlBu"))(100))
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("phyloseq")
+library(phyloseq)
+library(GUniFrac)
+tree <- read.tree("OTUs.tre")
+unifrac <- phyloseq(otu_table(otu,taxa_are_rows = F),phy_tree(tree))
+
+W.unifrac <- distance(unifrac,method = "wunifrac")
+
+U.unifrac <- distance(unifrac,method = "unifrac")
+
+W.unifrac <- as.matrix(W.unifrac)
+write.table(W.unifrac,"W.unifrac.txt",sep = "\t")
+U.unifrac <- as.matrix(U.unifrac)
+write.table(U.unifrac,"U.unifrac.txt",sep = "\t")
